@@ -3,7 +3,7 @@ import requests
 BASE_URL = "http://football-frenzy.s3-website.eu-north-1.amazonaws.com/api"
 
 def fetch_seasons():
-    """Fetch available seasons from the API."""
+    """Fetch available seasons from API"""
     try:
         response = requests.get(BASE_URL)
         response.raise_for_status()
@@ -14,7 +14,7 @@ def fetch_seasons():
         return []
 
 def fetch_gamedays(year):
-    """Fetch gamedays for a given season."""
+    """Fetch gamedays for given season"""
     try:
         response = requests.get(f"{BASE_URL}/{year}")
         response.raise_for_status()
@@ -25,7 +25,7 @@ def fetch_gamedays(year):
         return []
 
 def fetch_games_for_gameday(year, gameday):
-    """Fetch games for a specific gameday in a season."""
+    """Fetch games for specific gameday in the season"""
     try:
         response = requests.get(f"{BASE_URL}/{year}/{gameday}")
         response.raise_for_status()
