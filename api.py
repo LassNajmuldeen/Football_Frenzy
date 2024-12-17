@@ -1,22 +1,38 @@
 import requests
 
-BASE_URL = "http://football-frenzy.s3-website.eu-north-1.amazonaws.com"
+BASE_URL = "http://football-frenzy.s3-website.eu-north-1.amazonaws.com/api"
 
-def fetch_games(year: int):
+def fetch_gamedays(year):
     """
-    Fetch all games for a given year from the Football Frenzy API.
-
+    Fetch all gamedays for a given season.
     Args:
-        year (int): The year to fetch games for.
-
+        year (str): The year of the season (e.g., '2006').
     Returns:
-        list: A list of games if the request is successful, otherwise None.
+        list: A list of gameday dates if successful, otherwise None.
     """
-    url = f"{BASE_URL}/games/{year}.json"
     try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an HTTPError for bad responses
-        return response.json()  # Parse JSON response
+        response = requests.get(f"{BASE_URL}/{year}")
+        response.raise_for_status()
+        data = response.json()
+        return data.get("gamedays", [])
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching games for {year}: {e}")
+        print(f"Error fetching gamedays for year {year}: {e}")
+        return None
+
+def fetch_games_for_gameday(year, gameday):
+    """
+    Fetch games for a specific gameday in a season.
+    Args:
+        year (str): The year of the season (e.g., '2006').
+        gameday (str): The date of the gameday (e.g., '2006/03/19').
+    Returns:
+        list: A list of games if successful, otherwise None.
+    """
+    try:
+        response = requests.get(f"{BASE_URL}/{year}/{gameday}")
+        response.raise_for_status()
+        data = response.json()
+        return data.get("games", [])
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching games for gameday {gameday} in {year}: {e}")
         return None
