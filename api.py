@@ -36,3 +36,18 @@ def fetch_games_for_gameday(year, gameday):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching games for gameday {gameday} in {year}: {e}")
         return None
+
+def filter_games_by_score(games, home_score, away_score):
+    """
+    Filter games that ended with a specific home and away score.
+    Args:
+        games (list): List of game dictionaries.
+        home_score (int): Home team score.
+        away_score (int): Away team score.
+    Returns:
+        list: A list of games matching the score.
+    """
+    return [
+        game for game in games
+        if game["home"]["goals"] == home_score and game["away"]["goals"] == away_score
+    ]
