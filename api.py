@@ -2,14 +2,19 @@ import requests
 
 BASE_URL = "http://football-frenzy.s3-website.eu-north-1.amazonaws.com/api"
 
+def fetch_seasons():
+    """Fetch available seasons from the API."""
+    try:
+        response = requests.get(BASE_URL)
+        response.raise_for_status()
+        data = response.json()
+        return data.get("seasons", [])
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching seasons: {e}")
+        return []
+
 def fetch_gamedays(year):
-    """
-    Fetch all gamedays for a given season.
-    Args:
-        year (str): The year of the season (e.g., '2006').
-    Returns:
-        list: A list of gameday dates if successful, otherwise None.
-    """
+    """Fetch gamedays for a given season."""
     try:
         response = requests.get(f"{BASE_URL}/{year}")
         response.raise_for_status()
@@ -17,17 +22,10 @@ def fetch_gamedays(year):
         return data.get("gamedays", [])
     except requests.exceptions.RequestException as e:
         print(f"Error fetching gamedays for year {year}: {e}")
-        return None
+        return []
 
 def fetch_games_for_gameday(year, gameday):
-    """
-    Fetch games for a specific gameday in a season.
-    Args:
-        year (str): The year of the season (e.g., '2006').
-        gameday (str): The date of the gameday (e.g., '2006/03/19').
-    Returns:
-        list: A list of games if successful, otherwise None.
-    """
+    """Fetch games for a specific gameday in a season."""
     try:
         response = requests.get(f"{BASE_URL}/{year}/{gameday}")
         response.raise_for_status()
@@ -35,19 +33,4 @@ def fetch_games_for_gameday(year, gameday):
         return data.get("games", [])
     except requests.exceptions.RequestException as e:
         print(f"Error fetching games for gameday {gameday} in {year}: {e}")
-        return None
-
-def filter_games_by_score(games, home_score, away_score):
-    """
-    Filter games that ended with a specific home and away score.
-    Args:
-        games (list): List of game dictionaries.
-        home_score (int): Home team score.
-        away_score (int): Away team score.
-    Returns:
-        list: A list of games matching the score.
-    """
-    return [
-        game for game in games
-        if game["home"]["goals"] == home_score and game["away"]["goals"] == away_score
-    ]
+        return []
