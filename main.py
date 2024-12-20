@@ -16,4 +16,19 @@ def main():
     if year not in seasons:
         print(f"Invalid year. Choose from: {', '.join(seasons)}")
         return
+
+    # Fetch gamedays for the year
+    gamedays = fetch_gamedays(year)
+    if not gamedays:
+        print(f"No gamedays found for year {year}. Exiting.")
+        return
+
+    # User input: Scores
+    try:
+        home_score = int(input("Home score: ").strip())
+        away_score = int(input("Away score: ").strip())
+    except ValueError:
+        print("Invalid scores. Please enter integers.")
+        return
+
 main()
