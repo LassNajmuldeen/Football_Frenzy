@@ -24,9 +24,6 @@ def main():
     for gameday in season_data['gamedays']:
         gameday_data = list_games(year, gameday)
         for game in gameday_data['games']:
-            home_goals = game['score']['home']
-            away_goals = game['score']['away']
-
             # Check if the game score matches the user's input
             if game['score']['home']['goals'] == home_score and  game['score']['away']['goals'] == away_score:
                 date = gameday_data['date']
