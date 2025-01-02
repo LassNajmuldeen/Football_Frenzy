@@ -1,60 +1,47 @@
-from api import fetch_seasons, fetch_gamedays, fetch_games_for_gameday
+import api
+from api import list_seasons, list_gamedays, list_games
+
 
 def main():
     print("STAT EXPLORER")
-    print("*************\n")
+    print("*************")
 
-    # Fetch and display available seasons
-    seasons = fetch_seasons()
-    if not seasons:
-        print("No available seasons found. Exiting.")
+    # Take user input
+    year = str(input("Enter year: "))
+    if year not in api.list_seasons():
+        print('Year is not available')
         return
-    print(f"Available seasons: {seasons[0]}-{seasons[-1]}")
+    home_score = int(input("Home score: "))
+    away_score = int(input("Away score: "))
 
-    # User input for year
-    year = input("Enter year: ").strip()
-    if year not in seasons:
-        print(f"Invalid year. Please choose a year between {seasons[0]} and {seasons[-1]}.")
-        return
+    # Fetch all data for the given season
+    season_data = list_gamedays(year)
 
-    # Fetch gamedays for the selected year
-    gamedays = fetch_gamedays(year)
-    if not gamedays:
-        print(f"No gamedays found for year {year}. Exiting.")
-        return
+    # List to store games that match the criteria
+    games = []
 
-    # User input for scores
-    try:
-        home_score = int(input("Home score: ").strip())
-        away_score = int(input("Away score: ").strip())
-    except ValueError:
-        print("Invalid score input. Please enter integers.")
-        return
+    # Iterate through each gameday and extract games with the required score
+    for gameday in season_data['gamedays']:
+        gameday_data = list_games(year, gameday)
+        for game in gameday_data['games']:
+            home_goals = game['score']['home']
+            away_goals = game['score']['away']
 
-    print("\n" + "-" * 53 + "\n")
+            # Check if the game score matches the user's input
+            if game['score']['home']['goals'] == home_score and  game['score']['away']['goals'] == away_score:
+                date = gameday_data['date']
+                home_team = game['score']['home']['team']
+                away_team = game['score']['home']['team']
+                games.append(f"[{date}]  ({home_score}) {home_team} - {away_team} ({away_score})")
 
-    # Fetch and filter games
-    matching_games = []
-    for gameday in gamedays:
-        games = fetch_games_for_gameday(year, gameday)
+    # Display the results
+    if games:
+        print("\n-----------------------------------------------------")
         for game in games:
-            home_team = game.get("home", {}).get("team")
-            away_team = game.get("away", {}).get("team")
-            home_goals = game.get("home", {}).get("goals")
-            away_goals = game.get("away", {}).get("goals")
-
-            if home_goals == home_score and away_goals == away_score:
-                matching_games.append((gameday, home_team, away_team))
-
-    # Display results
-    if matching_games:
-        for gameday, home_team, away_team in matching_games:
-            game_date = gameday.split("/")[-1]  # Extract date part
-            print(f"[{game_date}]  ({home_score})  {home_team.center(15)}- {away_team.center(15)}({away_score})")
+            print(game)
     else:
-        print("No games found with the specified scores.")
+        print("No games found with the specified score.")
 
-    print("\n" + "-" * 53)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
