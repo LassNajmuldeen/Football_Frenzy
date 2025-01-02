@@ -56,5 +56,5 @@ def main():
 
     print("\n" + "-" * 53)
 
-
-main()
+if __name__ == '__main__':
+    main()
