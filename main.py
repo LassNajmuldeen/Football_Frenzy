@@ -25,10 +25,10 @@ def main():
         gameday_data = list_games(year, gameday)
         for game in gameday_data['games']:
             # Check if the game score matches the user's input
-            if game['score']['home']['goals'] == home_score and  game['score']['away']['goals'] == away_score:
+            if game['score']['home']['goals'] == home_score and game['score']['away']['goals'] == away_score:
                 date = gameday_data['date']
                 home_team = game['score']['home']['team']
-                away_team = game['score']['home']['team']
+                away_team = game['score']['away']['team']
                 games.append(f"[{date}]  ({home_score}) {home_team} - {away_team} ({away_score})")
 
     # Display the results
